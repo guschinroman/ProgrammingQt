@@ -17,11 +17,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     cat.cpp \
+    fraction.cpp \
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
     cat.h \
+    fraction.h \
     mainwindow.h
 
 FORMS += \
