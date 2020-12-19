@@ -12,7 +12,6 @@ public:
     int weigth();
     void setWeigth(int weigth);
 
-private:
     int weigthValue;
     QString name;
     int length;

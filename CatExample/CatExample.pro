@@ -18,13 +18,17 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     cat.cpp \
     fraction.cpp \
+    intstack.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    myellipse.cpp
 
 HEADERS += \
     cat.h \
     fraction.h \
-    mainwindow.h
+    intstack.h \
+    mainwindow.h \
+    myellipse.h
 
 FORMS += \
     mainwindow.ui

@@ -4,6 +4,24 @@
 #include "fraction.h"
 #include <QDate>
 #include <QMessageBox>
+#include <QFileDialog>
+#include <QDebug>
+#include <QDataStream>
+#include <QDate>
+#include <myellipse.h>
+#include <intstack.h>
+
+QDataStream& operator<<(QDataStream& stream, const Cat & cat)
+{
+    stream << cat.name << cat.length << cat.weigthValue;
+    return stream;
+}
+
+QDataStream& operator>>(QDataStream& stream, Cat& cat)
+{
+    stream >> cat.name >> cat.length >> cat.weigthValue;
+    return stream;
+}
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -15,6 +33,27 @@ MainWindow::MainWindow(QWidget *parent)
 
     this->cat.Meow();
     this->cat.Meow("Hey!");
+
+    MyCircle goodCircle;
+    goodCircle.setLength(30);
+    goodCircle.getLength();
+
+
+
+    IntStack stack;
+    stack.push(12);
+    stack.push(54);
+    stack.push(42);
+
+    qDebug() << stack.size() << endl;
+
+    int firstValue = stack.pop();
+    int secondValue = stack.pop();
+
+    qDebug() << firstValue << " " << secondValue << endl;
+
+    qDebug() << stack.size() << endl;
+
 }
 
 MainWindow::~MainWindow()
@@ -24,58 +63,30 @@ MainWindow::~MainWindow()
 
 void MainWindow::save()
 {
-    //this->cat.name = ui->name->text();
-    this->cat.setWeigth(ui->weigth->value());
-    QMessageBox mBox;
-    Cat cat;
-    Cat catTwo("name1", 23);
+    QString filename = QFileDialog::getOpenFileName(this,
+                                                    "Открыть файл",
+                                                    "D:\\Vstu",
+                                                    "TXT (*.txt);; Все файлы (*.*)");
+    QTextStream conout(stdout);
+    conout << "qwerty" << 123;
 
-    QString str1("AAAAAAAAAAAAAAA");
-    QString str2(15, 'A');
+    QMap<QString, Cat> cats;
+    cats.insert("Волгоград", Cat("cat1", 10));
+    cats.insert("Волжский", Cat("cat2", 20));
+    if (!filename.isEmpty())
+    {
+        QFile txtFile(filename);
+        bool isOpenCorrect = txtFile.open(QIODevice::WriteOnly);
+        if(isOpenCorrect)
+        {
+            QDataStream output(&txtFile);
+            qDebug() << "Stream is created";
+            output << cats;
+        }
 
-    QDate date1;
-
-    date1.day(); // динамический
-
-    QDate::isValid(2020, 13, 20); //статический
-
-    QString FIO(""); // ФИО
-    QString fisrtName("Козлов"); // фамилия
-    QString name("Андрей"); // имя
-    QString patronymic("Петрович"); // отчество
-
-    FIO.append(fisrtName)
-            .append(name)
-            .append(patronymic);
-
-    QDate stringDate = QDate::currentDate();
-    int cyDate = stringDate.daysInYear();
-
-    QString strDate = stringDate
-            .toString("dd.MM.yyyy")
-            .prepend("Today is ");
-
-    QString strCat("кот, который живет на крыше");
-    auto indexCatFirst = strCat.indexOf(QString("тор"));
-    auto indexCatSecond = strCat.indexOf(QString("тор"), 10);
-
-    auto N = 50;
-    auto secondNameArr = new QString[N];
-    auto oneStr = new QString("23423");
-
-    secondNameArr[0] = "Test Testov Testovich";
-
-    delete [] secondNameArr;
-
-    Fraction f1, f2;
-
-    f1.setNumerator(23);
-    f1.setDenominator(15);
-    auto value = f1.toDouble();
-
-    mBox.setText(strDate + cyDate);
-
-    mBox.exec();
+        txtFile.close();
+    }
+    qDebug() << filename;
 }
 
 void MainWindow::load()
@@ -86,6 +97,25 @@ void MainWindow::load()
 
     Cat catTwo;
     mBox.setText("Loaded");
+    QString filename = QFileDialog::getOpenFileName(this,
+                                                    "Открыть файл",
+                                                    "D:\\Vstu",
+                                                    "TXT (*.txt);; Все файлы (*.*)");
+    QMap<QString, Cat> cats;
+    if (!filename.isEmpty())
+    {
+        QFile txtFile(filename);
+        bool isOpenCorrect = txtFile.open(QIODevice::ReadOnly);
+        if(isOpenCorrect)
+        {
+            QDataStream input(&txtFile);
+            qDebug() << "Stream is created";
+            input >> cats;
+        }
+
+        txtFile.close();
+    }
+    qDebug() << cats["Волгоград"].name << cats["Волгоград"].weigth();
     mBox.exec();
 }
 
